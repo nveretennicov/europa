@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody rb;
-    [SerializeField] public float speed = 10f;
+    [SerializeField] private float speed = 10f;
+    [SerializeField] private MouseLook mouseLookScript;
 
     void Start()
     {
@@ -22,5 +23,14 @@ public class PlayerMovement : MonoBehaviour
         
         move = raw_move * speed * Time.deltaTime;
         rb.velocity = move;
+
+        if (move != Vector3.zero)
+        {
+            mouseLookScript.StartBobbing();
+        }
+        else
+        {
+            mouseLookScript.StopBobbing();
+        }
     }
 }
