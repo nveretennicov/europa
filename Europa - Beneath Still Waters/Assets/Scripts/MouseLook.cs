@@ -11,8 +11,7 @@ public class MouseLook : MonoBehaviour
     private bool inSelectionMode = false;
     
     [SerializeField] private float bobResetSpeed;
-    [SerializeField] private float verticalBobbingSpeed;
-    [SerializeField] private float horizontalBobbingSpeed;
+    [SerializeField] private float bobbingSpeed;
     [SerializeField] private float verticalBobDistance;
     [SerializeField] private float horizontalBobDistance;
 
@@ -20,6 +19,9 @@ public class MouseLook : MonoBehaviour
     private Vector3 startingCamPos;
     private float verticalSinAngle = 180f;
     private float horizontalSinAngle = 0f;
+
+    [SerializeField] private Transform footstepSoundOrigin;
+    private bool footSoundPlayed = false;
 
 
     void Start()
@@ -70,11 +72,19 @@ public class MouseLook : MonoBehaviour
     {
         if (isBobbing)
         {
-            if (verticalSinAngle >= 360) verticalSinAngle = 180;
+
+            // SoundManager.PlaySound(SoundLibrary.Singleton.metalFootstep, transform.position, 0.075f, 0.2f);
+            if (verticalSinAngle >= 360) { verticalSinAngle = 180; footSoundPlayed = false; }
             if (horizontalSinAngle >= 360) horizontalSinAngle = 0;
 
-            verticalSinAngle += Time.deltaTime * verticalBobbingSpeed;
-            horizontalSinAngle += Time.deltaTime * horizontalBobbingSpeed * 2f;
+            if (verticalSinAngle >= 270f && !footSoundPlayed) 
+            {
+                SoundManager.PlaySound(SoundLibrary.Singleton.metalFootstep, footstepSoundOrigin.position, 0.11f, 0.2f);
+                footSoundPlayed = true;
+            }
+
+            verticalSinAngle += Time.deltaTime * bobbingSpeed;
+            horizontalSinAngle += Time.deltaTime * bobbingSpeed;
             
             float verticalOffset = Mathf.Sin(Mathf.Deg2Rad * verticalSinAngle);
             float horizontalOffset = Mathf.Sin(Mathf.Deg2Rad * horizontalSinAngle);
@@ -99,5 +109,5 @@ public class MouseLook : MonoBehaviour
         }
     }
 
-    public void StopBobbing() { isBobbing = false; }
+    public void StopBobbing() { isBobbing = false; footSoundPlayed = false; }
 }
